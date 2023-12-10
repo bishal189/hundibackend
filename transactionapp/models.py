@@ -35,8 +35,14 @@ class Receiver(models.Model):
 class Transaction(models.Model):
     sender=models.ForeignKey(Sender,on_delete=models.CASCADE)
     receiver=models.ForeignKey(Receiver,on_delete=models.CASCADE)
-    received=models.BooleanField(default=False)
-    paid=models.BooleanField(default=False)
+    sentAmount=models.IntegerField()
+    receivedAmount=models.IntegerField()
+    status_choices=[
+        ('RECEIVED','Received'),
+        ('PAID','Paid'),
+        ('CANCELLED','Cancelled'),
+    ]
+    status=models.CharField(choices=status_choices,max_length=15)
     created_at=models.DateField(auto_now_add=True)
     completed_at=models.DateField(auto_now_add=True)
 
