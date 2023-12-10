@@ -25,7 +25,7 @@ SECRET_KEY = 'django-insecure-dfna@o)em8(x&wbyo6+$dfs46nkfk^x*09-fls9(vhr6i^1hlx
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ['*']
 
 
 # Application definition
@@ -40,7 +40,8 @@ INSTALLED_APPS = [
         'corsheaders',
 
     'rest_framework',
-    'authapp'
+    'authapp',
+    'transactionapp'
 ]
 
 MIDDLEWARE = [

@@ -1,5 +1,4 @@
 # Import your Account model or replace with the correct import
-from .models import Account
 from django.contrib.auth.decorators import login_required
 from authapp.forms import ResitrationForm
 from .models import Account
