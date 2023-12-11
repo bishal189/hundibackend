@@ -5,38 +5,44 @@ from .serializers import BankDetailSerializer,TransactionSerializer,SenderSerial
 from  .models import Transaction,BankDetail,Sender,Receiver
 from rest_framework.response import Response
 from rest_framework import status
-
+import json
 # Create your views here.
 
 @csrf_exempt
 @api_view(['POST'])
 def CreateNewTransaction(request):
     if request.method=="POST":
-        senderFirstName=request.POST['senderFirstName']
-        senderLastName=request.POST['senderLastName']
-        senderEmail=request.POST['senderEmail']
-        senderPhoneNumber=request.POST['senderPhoneNumber']
-        senderCountry=request.POST['senderCountry']
-        senderCity=request.POST['senderCity']
-        senderAddress=request.POST['senderAddress']
-        senderBankName=request.POST['senderBankName']
-        senderCurrencyCode=request.POST['senderCurrencyCode']
-        
-        sender,created=Sender.objects.get_or_create(firstName=senderFirstName,lastName=senderLastName,email=senderEmail,phoneNumber=senderPhoneNumber,country=senderCountry,city=senderCity,address=senderAddress,bankName=senderBankName,currencyCode=senderCurrencyCode)
-        print("sender created",created)
+        data=json.loads(request.body)
+        print(data)
+        sender=data['sender']
+        senderFirstName=sender['senderFirstName']
+        senderLastName=sender['senderLastName']
+        senderEmail=sender['senderEmail']
+        senderPhoneNumber=sender['senderPhoneNumber']
+        senderCountry=sender['senderCountry']
+        senderCity=sender['senderCity']
+        senderAddress=sender['senderAddress']
+        # senderBankName=sender['senderBankName']
+        senderCurrencyCode=sender['senderCurrencyCode']
 
-        receiverFullName=request.POST['receiverFullName']
-        receiverBankName=request.POST['receiverBankName']
-        receiverCurrencyCode=request.POST['receiverCurrencyCode']
-        receiverBankAccountNumber=request.POST['receiverBankAccountNumber']
+        user=request.user
+        print(user)
+        
+        sender,created=Sender.objects.get_or_create(user=user,firstName=senderFirstName,lastName=senderLastName,email=senderEmail,phoneNumber=senderPhoneNumber,country=senderCountry,city=senderCity,address=senderAddress,bankName="ddmo",currencyCode=senderCurrencyCode)
+        print("sender created",created)
+        receiver=data['receiver']
+        receiverFullName=receiver['receiverFullName']
+        receiverBankName=receiver['receiverBankName']
+        receiverCurrencyCode=receiver['receiverCurrencyCode']
+        receiverBankAccountNumber=receiver['receiverBankAccountNumber']
 
         receiver,created=Receiver.objects.get_or_create(fullName=receiverFullName,bankName=receiverBankName,bankAccountNumber=receiverBankAccountNumber,currencyCode=receiverCurrencyCode)
         print("receiver created",created)
 
-        sentAmount=request.POST['sentAmount']
-        receivedAmount=request.POST['receivedAmount']
+        sentAmount=data['sentAmount']
+        receivedAmount=data['receivedAmount']
 
-        transaction=Transaction.objects.create(sender=sender,receiver=receiver,sentAmount=sentAmount,receivedAmount=receivedAmount)
+        transaction=Transaction.objects.create(sender=sender,receiver=receiver,sentAmount=sentAmount,receivedAmount=receivedAmount,status='PROCESSING')
         print("transaction completed")
 
         data={'message':"Transaction started"}
