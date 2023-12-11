@@ -1,7 +1,7 @@
 from .models import Account
 from django.views.decorators.csrf import csrf_exempt
 from rest_framework.decorators import api_view
-
+from .serializers import BankDetailSerializer
 from  .models import Transaction,BankDetail,Sender,Receiver
 from rest_framework.response import Response
 from rest_framework import status
@@ -54,6 +54,21 @@ def CancelTransaction(request):
 
     data={"message":"Transaction Cancelled"}
     return Response(data,status=status.HTTP_200_OK)
+
+
+@csrf_exempt
+@api_view(['GET'])
+def GetBankCards(request,countryCode):
+    try:
+        banks=BankDetail.objects.filter(currencyCode=countryCode)  
+        serializer = BankDetailSerializer(banks, many=True)
+        data={'data':serializer.data}
+        return Response(data,status=status.HTTP_200_OK)
+
+    except Exception as e: 
+        data={"error":"Got some Error"+e}
+        return Response(data,status=status.HTTP_400_BAD_REQUEST)
+    
 
 
 
