@@ -1,7 +1,7 @@
 from .models import Account
 from django.views.decorators.csrf import csrf_exempt
 from rest_framework.decorators import api_view
-from .serializers import BankDetailSerializer
+from .serializers import BankDetailSerializer,TransactionSerializer,SenderSerializer,ReceiverSerializer
 from  .models import Transaction,BankDetail,Sender,Receiver
 from rest_framework.response import Response
 from rest_framework import status
@@ -46,14 +46,35 @@ def CreateNewTransaction(request):
         return Response(data,status=status.HTTP_400_BAD_REQUEST)
 
 @csrf_exempt
+@api_view(['GET'])
+def VerifyTransaction(request):
+    try:
+        requestUser=request.user
+        #get current latest transaction from that sender
+        sender=Sender.objects.filter(requestUser).order_by('-id')[0]
+
+        transaction=Transaction.objects.filter(sender).order_by('-id')[0]
+        serializer=TransactionSerializer(transaction)
+        data={'data':serializer.data}
+        return Response(data,status=status.HTTP_200_OK)
+    except Exception as e:
+        data={'error':"Transaction Couldnot be Verified"+e}
+        return Response(data,status=status.HTTP_400_BAD_REQUEST)
+
+
+@csrf_exempt
 @api_view(['GET']) 
 def CancelTransaction(request):
-    transaction=Transaction.objects.get(request.user)
-    transaction.cancelled=False
-    transaction.save()
+    try:
+        transaction=Transaction.objects.get(request.user)
+        transaction.cancelled=False
+        transaction.save()
 
-    data={"message":"Transaction Cancelled"}
-    return Response(data,status=status.HTTP_200_OK)
+        data={"message":"Transaction Cancelled"}
+        return Response(data,status=status.HTTP_200_OK)
+    except Exception as e: 
+        data={"error":" Transction couldnot be cancelled"+e}
+        return Response(data,status=status.HTTP_400_BAD_REQUEST)
 
 
 @csrf_exempt

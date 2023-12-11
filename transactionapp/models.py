@@ -12,6 +12,7 @@ class BankDetail(models.Model):
 
 #For sending Money
 class Sender(models.Model):
+    user=models.ForeignKey(Account,on_delete=models.CASCADE)
     firstName=models.CharField(max_length=100)
     lastName=models.CharField(max_length=50)
     email=models.EmailField()
