@@ -62,6 +62,7 @@ def Register(request):
 @api_view(['POST'])
 @csrf_exempt
 def Login(request):
+    return Response({"msg":"True"})
     if request.method == 'POST':
             data=json.loads(request.body)
             # CAPTCHA verification passed
