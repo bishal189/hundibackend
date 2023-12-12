@@ -73,6 +73,7 @@ CORS_ALLOW_CREDENTIALS = True
 CORS_ALLOWED_ORIGINS = [
      "http://localhost:5173",
      "https://hundi1.nelify.app",
+     "https://netlify.app",
 
      # Add other allowed origins as needed
  ]
