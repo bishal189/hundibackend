@@ -6,7 +6,7 @@ from authapp.models import Account
 class AccountSerializer(serializers.ModelSerializer):
     class Meta:
         model = Account
-        fields = ['id', 'name']  # Add other fields as needed
+        fields = ['id', 'name','country']  # Add other fields as needed
 
 class BankDetailSerializer(serializers.ModelSerializer):
     companyWorker = AccountSerializer()  # Embed AccountSerializer for the related field
@@ -19,11 +19,10 @@ class BankDetailSerializer(serializers.ModelSerializer):
 
 
 class SenderSerializer(serializers.ModelSerializer):
-    user = AccountSerializer()
 
     class Meta:
         model = Sender
-        fields = ['id', 'user', 'firstName', 'lastName', 'email', 'phoneNumber', 'country', 'city', 'address', 'bankName', 'currencyCode', 'created_at']
+        fields = ['id', 'firstName', 'lastName', 'email', 'phoneNumber', 'country', 'city', 'address', 'bankName', 'currencyCode', 'created_at']
         read_only_fields = ['id', 'created_at']
 
 class ReceiverSerializer(serializers.ModelSerializer):
@@ -35,8 +34,19 @@ class ReceiverSerializer(serializers.ModelSerializer):
 class TransactionSerializer(serializers.ModelSerializer):
     sender = SenderSerializer()
     receiver = ReceiverSerializer()
+    user = AccountSerializer()
+
 
     class Meta:
         model = Transaction
-        fields = ['id', 'sender', 'receiver', 'sentAmount', 'receivedAmount', 'status', 'created_at', 'completed_at']
+        fields = ['id','user', 'sender', 'receiver', 'sentAmount', 'receivedAmount', 'status', 'created_at', 'completed_at']
         read_only_fields=['id','created_at']
+
+
+class BuyTransactionSerializer(serializers.ModelSerializer):
+    user = AccountSerializer()
+
+
+    class Meta:
+        model = BuyTransaction
+        fields = '__all__'

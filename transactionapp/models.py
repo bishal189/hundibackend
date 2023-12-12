@@ -12,7 +12,6 @@ class BankDetail(models.Model):
 
 #For sending Money
 class Sender(models.Model):
-    user=models.ForeignKey(Account,on_delete=models.CASCADE)
     firstName=models.CharField(max_length=100)
     lastName=models.CharField(max_length=50)
     email=models.EmailField()
@@ -34,10 +33,29 @@ class Receiver(models.Model):
 
 #For creating a relation between sender and receiver
 class Transaction(models.Model):
+    user=models.ForeignKey(Account,on_delete=models.CASCADE,blank=True,null=True)
     sender=models.ForeignKey(Sender,on_delete=models.CASCADE)
     receiver=models.ForeignKey(Receiver,on_delete=models.CASCADE)
     sentAmount=models.FloatField()
     receivedAmount=models.FloatField()
+    status_choices=[
+        ('PROCESSING','Processing'),
+        ('RECEIVED','Received'),
+        ('PAID','Paid'),
+        ('CANCELLED','Cancelled'),
+    ]
+    status=models.CharField(choices=status_choices,max_length=15,blank=True)
+    created_at=models.DateField(auto_now_add=True)
+    completed_at=models.DateField(auto_now_add=True)
+
+#For creating a relation between sender and receiver
+class BuyTransaction(models.Model):
+    user=models.ForeignKey(Account,on_delete=models.CASCADE,blank=True,null=True)
+    consumerName=models.CharField(max_length=100)
+    consumerId=models.CharField(max_length=100,blank=True,null=True)
+    companyName=models.CharField(max_length=100)
+    type=models.CharField(max_length=100,blank=True,null=True)
+    Amount=models.FloatField()
     status_choices=[
         ('PROCESSING','Processing'),
         ('RECEIVED','Received'),
