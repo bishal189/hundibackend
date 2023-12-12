@@ -67,22 +67,15 @@ SESSION_COOKIE_SECURE = False
 
 
 
-# CORS_ALLOW_CREDENTIALS = True
-# # CORS_ALLOW_CREDENTIALS = True
-
-# CORS_ALLOWED_ORIGINS = [
-#      "http://localhost:5173",
-#      "https://hundi1.nelify.app",
-
-#      # Add other allowed origins as needed
-#  ]
-CORS_ALLOWED_ORIGINS = [
-    "*",  # Allow requests from any origin
-]
-
-# Allow credentials if needed
 CORS_ALLOW_CREDENTIALS = True
+# CORS_ALLOW_CREDENTIALS = True
 
+CORS_ALLOWED_ORIGINS = [
+     "http://localhost:5173",
+     "https://hundi1.netlify.app",
+
+     # Add other allowed origins as needed
+ ]
 REST_FRAMEWORK = {
     'DEFAULT_AUTHENTICATION_CLASSES': (
         'rest_framework_simplejwt.authentication.JWTAuthentication',
