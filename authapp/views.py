@@ -19,17 +19,17 @@ from rest_framework_simplejwt.tokens import RefreshToken
 def Register(request):
     if request.method == 'POST':
             data=json.loads(request.body)
+
             form = ResitrationForm(data)
             if form.is_valid():
                 name = form.cleaned_data['name']
                 email = form.cleaned_data['email']
-                password = form.cleaned_data['password']
 
-                confirm_password=data['confirm_password']
+                password = form.cleaned_data['password']
+                confirm_password=data['confirmPassword']
 
                 country=form.cleaned_data['country']
                 phone_number=form.cleaned_data['phone_number']
-
                 if password!=confirm_password:
                     data={"error":"password and confirm password must be equal"}
                     return Response(data,status=status.HTTP_400_BAD_REQUEST)
@@ -50,7 +50,7 @@ def Register(request):
                 return Response(data, status=status.HTTP_201_CREATED)
 
             else:
-                data={'error':"Unique contraint failed for name or phonenumber"}
+                data={'error':f'Unique contraint failed for name or phonenumber ${form.errors}'}
                 return Response(data,status=status.HTTP_403_FORBIDDEN)       
     else:
         data={"error":"Method Not Allowed . Try again"}
