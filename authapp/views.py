@@ -95,7 +95,7 @@ def Login(request):
         
 @api_view(['GET'])
 def verifyUser(request):
-    if request.user.is_authenticated:
+    if request.user is not None:
         data={"message":"verified user is there"}
         return Response(data,status=status.HTTP_200_OK)
     else:
@@ -117,7 +117,6 @@ def get_csrf_token(request):
 
 @api_view(['GET'])
 def get_user(request):
-    print(request.user.country)
     serializer=AccountSerializer(request.user)
     return Response({'data':serializer.data})
 
