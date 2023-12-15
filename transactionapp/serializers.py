@@ -6,7 +6,7 @@ from authapp.models import Account
 class AccountSerializer(serializers.ModelSerializer):
     class Meta:
         model = Account
-        fields = ['id', 'name','country']  # Add other fields as needed
+        exclude = ['password']  # Exclude the 'email' field
 
 class BankDetailSerializer(serializers.ModelSerializer):
     companyWorker = AccountSerializer()  # Embed AccountSerializer for the related field
@@ -31,14 +31,14 @@ class ReceiverSerializer(serializers.ModelSerializer):
         fields = ['id', 'fullName', 'bankName', 'bankAccountNumber', 'currencyCode', 'created_at']
         read_only_fields = ['id', 'created_at']
 
-class TransactionSerializer(serializers.ModelSerializer):
+class TransferTransactionSerializer(serializers.ModelSerializer):
     sender = SenderSerializer()
     receiver = ReceiverSerializer()
     user = AccountSerializer()
 
 
     class Meta:
-        model = Transaction
+        model = TransferTransaction
         fields = ['id','user', 'sender', 'receiver', 'sentAmount', 'receivedAmount', 'status', 'created_at', 'completed_at']
         read_only_fields=['id','created_at']
 

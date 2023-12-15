@@ -1,8 +1,8 @@
 from .models import Account
 from django.views.decorators.csrf import csrf_exempt
 from rest_framework.decorators import api_view
-from .serializers import BankDetailSerializer,TransactionSerializer,BuyTransactionSerializer,SenderSerializer,ReceiverSerializer
-from  .models import Transaction,BankDetail,Sender,Receiver,BuyTransaction
+from .serializers import BankDetailSerializer,TransferTransactionSerializer,BuyTransactionSerializer,SenderSerializer,ReceiverSerializer
+from  .models import TransferTransaction,BankDetail,Sender,Receiver,BuyTransaction
 from rest_framework.response import Response
 from rest_framework import status
 import json
@@ -10,7 +10,7 @@ import json
 
 @csrf_exempt
 @api_view(['POST'])
-def CreateNewTransaction(request):
+def CreateNewTransferTransaction(request):
     if request.method=="POST":
         data=json.loads(request.body)
         sender=data['sender']
@@ -41,7 +41,7 @@ def CreateNewTransaction(request):
         sentAmount=data['sentAmount']
         receivedAmount=data['receivedAmount']
 
-        transaction=Transaction.objects.create(user=user,sender=sender,receiver=receiver,sentAmount=sentAmount,receivedAmount=receivedAmount,status='PROCESSING')
+        transaction=TransferTransaction.objects.create(user=user,sender=sender,receiver=receiver,sentAmount=sentAmount,receivedAmount=receivedAmount,status='PROCESSING')
         print("transaction completed")
 
         data={'message':"Transaction started"}
@@ -52,34 +52,52 @@ def CreateNewTransaction(request):
 
 @csrf_exempt
 @api_view(['GET'])
-def VerifyTransaction(request):
+def VerifyTransferTransaction(request):
     try:
         #get current latest transaction from that sender
 
-        transaction=Transaction.objects.filter(user=request.user).order_by('-id')[0]
-        serializer=TransactionSerializer(transaction)
+        transaction=TransferTransaction.objects.filter(user=request.user).order_by('-id')[0]
+        serializer=TransferTransactionSerializer(transaction)
         data={'data':serializer.data}
         return Response(data,status=status.HTTP_200_OK)
     except Exception as e:
-        data={'error':"Transaction Couldnot be Verified"}
+        data={'error':"TransferTransaction Couldnot be Verified"}
         return Response(data,status=status.HTTP_400_BAD_REQUEST)
 
 
 
 @csrf_exempt
 @api_view(['GET']) 
-def CancelTransaction(request):
+def CancelTransferTransaction(request):
     try:
-        transaction=Transaction.objects.filter(user=request.user).order_by('-id')[0]
+        transaction=TransferTransaction.objects.filter(user=request.user).order_by('-id')[0]
         transaction.status='CANCELLED'
         transaction.save()
 
-        data={"message":"Transaction Cancelled"}
+        data={"message":"Transfer Transaction Cancelled"}
         return Response(data,status=status.HTTP_200_OK)
     except Exception as e: 
         print(e)
         data={"error":" Transction couldnot be cancelled"}
         return Response(data,status=status.HTTP_400_BAD_REQUEST)
+
+@api_view(['GET'])
+def GetTransferTransactionUserHistory(request,limit=None):
+    try:
+        if (limit is not None):
+
+            transaction=TransferTransaction.objects.filter(user=request.user).order_by('-id')[:limit]
+        
+        else:
+            transaction=TransferTransaction.objects.filter(user=request.user).order_by('-id')
+
+        serializer=TransferTransactionSerializer(transaction,many=True)
+        data={'data':serializer.data}
+        return Response(data,status=status.HTTP_200_OK)
+    except Exception as e: 
+        print(e)
+        data={'error':"Couldnot get any transaction"}
+        return Response(data,status=status.HTTP_401_UNAUTHORIZED)
 
 @csrf_exempt
 @api_view(['GET']) 
@@ -96,25 +114,12 @@ def CancelBuyTransaction(request):
         data={"error":" Transction couldnot be cancelled"}
         return Response(data,status=status.HTTP_400_BAD_REQUEST)
 
-@api_view(['GET'])
-def GetTransactionUserHistory(request):
-    try:
-        transaction=Transaction.objects.filter(user=request.user).order_by('-id')
-        serializer=TransactionSerializer(transaction,many=True)
-        data={'data':serializer.data}
-        return Response(data,status=status.HTTP_200_OK)
-    except Exception as e: 
-        print(e)
-        data={'error':"Couldnot get any transaction"}
-        return Response(data,status=status.HTTP_401_UNAUTHORIZED)
 
 @csrf_exempt
 @api_view(['GET'])
 def GetBankCards(request,countryCode):
     try:
-        
         banks=BankDetail.objects.filter(currencyCode=countryCode)  
-
         serializer = BankDetailSerializer(banks, many=True)
         data={'data':serializer.data}
         return Response(data,status=status.HTTP_200_OK)
@@ -142,7 +147,6 @@ def CreateNewBuyTransaction(request):
         user=request.user
         
         buy=BuyTransaction.objects.create(user=user,consumerName=consumerName,consumerId=consumerId,companyName=companyName,type=type,Amount=amount,status="PROCESSING")
-        print("bbuy created")
         data={'message':"Transaction started"}
         return Response(data,status=status.HTTP_201_CREATED)
     else:
@@ -150,9 +154,14 @@ def CreateNewBuyTransaction(request):
         return Response(data,status=status.HTTP_400_BAD_REQUEST)
 
 @api_view(['GET'])
-def GetBuyTransactionUserHistory(request):
+def GetBuyTransactionUserHistory(request,limit=None):
     try:
-        transaction=BuyTransaction.objects.filter(user=request.user).order_by('-id')
+        if (limit is not None):
+            transaction=BuyTransaction.objects.filter(user=request.user).order_by('-id')[:limit]
+        else:
+            transaction=BuyTransaction.objects.filter(user=request.user).order_by('-id')
+
+
         serializer=BuyTransactionSerializer(transaction,many=True)
         data={'data':serializer.data}
         return Response(data,status=status.HTTP_200_OK)

@@ -14,5 +14,14 @@ class ResitrationForm(forms.ModelForm):
 
 
 
+class UpdateForm(forms.ModelForm):
+  
+    class Meta:
+        model=Account
+        fields = '__all__'
+        # captcha = ReCaptchaField(widget=ReCaptchaV2Checkbox) 
+
+
+
 
 

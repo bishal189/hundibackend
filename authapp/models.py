@@ -61,6 +61,12 @@ class Account(AbstractBaseUser):
     password=models.CharField(max_length=100)
     country=models.CharField(max_length=100)
     phone_number=models.CharField(max_length=20,unique=True)
+    date_of_birth=models.DateField(blank=True,null=True)
+    city=models.CharField(max_length=50,blank=True,null=True)
+    zip_code=models.CharField(max_length=10,blank=True,null=True)
+    address=models.CharField(max_length=50,blank=True,null=True)
+    gender=models.CharField(max_length=10,blank=True,null=True)
+
 
     #required filed mendotory 
 

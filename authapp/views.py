@@ -6,11 +6,16 @@ from django.views.decorators.csrf import csrf_exempt
 from rest_framework.decorators import api_view
 import json
 from django.contrib import  auth
+
+from .forms import UpdateForm
 #
 from rest_framework.response import Response
 from rest_framework import status
 from django.middleware.csrf import get_token
 from rest_framework_simplejwt.tokens import RefreshToken
+from transactionapp.serializers import AccountSerializer
+# from transactionapp.serializers import AccountSerializer
+# from .serializers import UserProfileSerializer
 
 #
 @csrf_exempt
@@ -90,9 +95,7 @@ def Login(request):
         
 @api_view(['GET'])
 def verifyUser(request):
-    print(request.user)
     if request.user.is_authenticated:
-        print(request.user)
         data={"message":"verified user is there"}
         return Response(data,status=status.HTTP_200_OK)
     else:
@@ -111,3 +114,40 @@ def logout(request):
 def get_csrf_token(request):
     csrf_token = get_token(request)
     return Response({'csrf_token': csrf_token})
+
+@api_view(['GET'])
+def get_user(request):
+    print(request.user.country)
+    serializer=AccountSerializer(request.user)
+    return Response({'data':serializer.data})
+
+
+
+
+@api_view(['POST'])
+def update_profile(request):
+    if request.method == 'POST':
+        data=json.loads(request.body)
+        user_profile = request.user
+        print(user_profile)
+
+        # Update only the fields present in the request data
+        for field in Account._meta.fields:  # Iterate over model fields
+            field_name = field.name
+            if field_name in data:
+                setattr(user_profile, field_name, data[field_name])
+
+        user_profile.save()
+            
+            # Serialize the updated user data
+
+        return Response({
+                'message': 'The user details are updated',
+            }, status=200)
+    else:
+        form = UpdateForm(instance=request.user)
+
+    return Response({'form': form})
+
+
+     

@@ -4,4 +4,4 @@ from .models import *
 admin.site.register(Sender)
 admin.site.register(Receiver)
 admin.site.register(BankDetail)
-admin.site.register(Transaction)
+admin.site.register(TransferTransaction)

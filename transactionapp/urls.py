@@ -3,12 +3,16 @@ from django.urls import path
 from . import views
 urlpatterns = [
 
-    path('newTransaction/',views.CreateNewTransaction,name='newTransaction'),
-    path('cancelTransaction/',views.CancelTransaction,name='cancelTransaction'),
+    path('newTransferTransaction/',views.CreateNewTransferTransaction,name='newTransaction'),
+    path('cancelTransferTransaction/',views.CancelTransferTransaction,name='cancelTransaction'),
     path('cancelBuyTransaction/',views.CancelBuyTransaction,name='cancelBuyTransaction'),
     path('getBankCards/<str:countryCode>/',views.GetBankCards,name='getBankCards'),
-    path('verifyTransaction/',views.VerifyTransaction,name='verifyTransaction'),
-    path('getTransactionHistory/',views.GetTransactionUserHistory,name='history'),
+    path('verifyTransferTransaction/',views.VerifyTransferTransaction,name='verifyTransaction'),
+    path('getTransferTransactionHistory/<int:limit>',views.GetTransferTransactionUserHistory,name='historLimit'),
+    path('getTransferTransactionHistory/',views.GetTransferTransactionUserHistory,name='history'),
+
+    path('getBuyTransactionHistory/<int:limit>',views.GetBuyTransactionUserHistory,name='buy_historyLimit'),
+
     path('getBuyTransactionHistory/',views.GetBuyTransactionUserHistory,name='buy_history'),
     path('newBuyTransaction/',views.CreateNewBuyTransaction,name='buy_newTransaction'),
 
