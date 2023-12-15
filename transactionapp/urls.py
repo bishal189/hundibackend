@@ -2,19 +2,19 @@
 from django.urls import path
 from . import views
 urlpatterns = [
-
+    path('userdashboard/',views.Dashboard,name="dashboard"),
     path('newTransferTransaction/',views.CreateNewTransferTransaction,name='newTransaction'),
     path('cancelTransferTransaction/',views.CancelTransferTransaction,name='cancelTransaction'),
-    path('cancelBuyTransaction/',views.CancelBuyTransaction,name='cancelBuyTransaction'),
+    path('cancelPayTransaction/',views.CancelPayTransaction,name='cancelPayTransaction'),
     path('getBankCards/<str:countryCode>/',views.GetBankCards,name='getBankCards'),
     path('verifyTransferTransaction/',views.VerifyTransferTransaction,name='verifyTransaction'),
     path('getTransferTransactionHistory/<int:limit>',views.GetTransferTransactionUserHistory,name='historLimit'),
     path('getTransferTransactionHistory/',views.GetTransferTransactionUserHistory,name='history'),
 
-    path('getBuyTransactionHistory/<int:limit>',views.GetBuyTransactionUserHistory,name='buy_historyLimit'),
+    path('getPayTransactionHistory/<int:limit>',views.GetPayTransactionUserHistory,name='buy_historyLimit'),
 
-    path('getBuyTransactionHistory/',views.GetBuyTransactionUserHistory,name='buy_history'),
-    path('newBuyTransaction/',views.CreateNewBuyTransaction,name='buy_newTransaction'),
+    path('getPayTransactionHistory/',views.GetPayTransactionUserHistory,name='buy_history'),
+    path('newPayTransaction/',views.CreateNewPayTransaction,name='buy_newTransaction'),
 
     
 ]

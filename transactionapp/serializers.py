@@ -43,10 +43,10 @@ class TransferTransactionSerializer(serializers.ModelSerializer):
         read_only_fields=['id','created_at']
 
 
-class BuyTransactionSerializer(serializers.ModelSerializer):
+class PayTransactionSerializer(serializers.ModelSerializer):
     user = AccountSerializer()
 
 
     class Meta:
-        model = BuyTransaction
+        model = PayTransaction
         fields = '__all__'

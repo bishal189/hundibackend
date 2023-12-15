@@ -131,14 +131,23 @@ def update_profile(request):
         user_profile = request.user
         print(user_profile)
 
+        if ('password' in data and 'confirmPassword' not in data) or('password' not in data and 'confirmPassword' in data):
+            return Response({'error':"password and confirm password cannot come alone"},status=status.HTTP_400_BAD_REQUEST)
+
+        
+        if 'password'in data and'confirmPassword' in data :
+            if data['password']!=data['confirmPassword']:
+                return Response({'error':"password and confirm password didnot match"},status=status.HTTP_400_BAD_REQUEST)
+
         # Update only the fields present in the request data
         for field in Account._meta.fields:  # Iterate over model fields
             field_name = field.name
             if field_name in data:
                 setattr(user_profile, field_name, data[field_name])
 
-        user_profile.save()
-            
+        if 'password' in data:
+            user_profile.set_password(data['password'])
+        user_profile.save()            
             # Serialize the updated user data
 
         return Response({

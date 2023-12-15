@@ -8,7 +8,7 @@ class BankDetail(models.Model):
     bankName=models.CharField(max_length=200)
     currencyCode=models.CharField(max_length=4)
     bankAccountNumber=models.CharField(max_length=50)
-    created_at=models.DateTimeField(auto_now_add=True)
+    created_at=models.DateTimeField(auto_now_add=True,null=True,blank=True)
 
 #For sending Money
 class Sender(models.Model):
@@ -36,8 +36,8 @@ class TransferTransaction(models.Model):
     user=models.ForeignKey(Account,on_delete=models.CASCADE,blank=True,null=True)
     sender=models.ForeignKey(Sender,on_delete=models.CASCADE)
     receiver=models.ForeignKey(Receiver,on_delete=models.CASCADE)
-    sentAmount=models.FloatField()
-    receivedAmount=models.FloatField()
+    sentAmount=models.DecimalField(max_digits=100,decimal_places=2)
+    receivedAmount=models.DecimalField(max_digits=100,decimal_places=2)
     status_choices=[
         ('PROCESSING','Processing'),
         ('RECEIVED','Received'),
@@ -46,16 +46,16 @@ class TransferTransaction(models.Model):
     ]
     status=models.CharField(choices=status_choices,max_length=15,blank=True)
     created_at=models.DateTimeField(auto_now_add=True)
-    completed_at=models.DateTimeField()
+    completed_at=models.DateField(blank=True,null=True)
 
 #For creating a relation between sender and receiver
-class BuyTransaction(models.Model):
+class PayTransaction(models.Model):
     user=models.ForeignKey(Account,on_delete=models.CASCADE,blank=True,null=True)
     consumerName=models.CharField(max_length=100)
     consumerId=models.CharField(max_length=100,blank=True,null=True)
     companyName=models.CharField(max_length=100)
     type=models.CharField(max_length=100,blank=True,null=True)
-    Amount=models.FloatField()
+    Amount=models.DecimalField(max_digits=100,decimal_places=2)
     status_choices=[
         ('PROCESSING','Processing'),
         ('RECEIVED','Received'),
@@ -63,7 +63,7 @@ class BuyTransaction(models.Model):
         ('CANCELLED','Cancelled'),
     ]
     status=models.CharField(choices=status_choices,max_length=15,blank=True)
-    created_at=models.DateTimeField(auto_now_add=True)
-    completed_at=models.DateField()
+    created_at=models.DateTimeField(auto_now_add=True,blank=True,null=True)
+    completed_at=models.DateField(blank=True,null=True)
 
 

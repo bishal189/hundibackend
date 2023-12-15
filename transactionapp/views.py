@@ -1,11 +1,13 @@
 from .models import Account
 from django.views.decorators.csrf import csrf_exempt
 from rest_framework.decorators import api_view
-from .serializers import BankDetailSerializer,TransferTransactionSerializer,BuyTransactionSerializer,SenderSerializer,ReceiverSerializer
-from  .models import TransferTransaction,BankDetail,Sender,Receiver,BuyTransaction
+from .serializers import BankDetailSerializer,TransferTransactionSerializer,PayTransactionSerializer,SenderSerializer,ReceiverSerializer
+from  .models import TransferTransaction,BankDetail,Sender,Receiver,PayTransaction
 from rest_framework.response import Response
 from rest_framework import status
 import json
+from django.db.models import Sum
+
 # Create your views here.
 
 @csrf_exempt
@@ -101,9 +103,9 @@ def GetTransferTransactionUserHistory(request,limit=None):
 
 @csrf_exempt
 @api_view(['GET']) 
-def CancelBuyTransaction(request):
+def CancelPayTransaction(request):
     try:
-        transaction=BuyTransaction.objects.filter(user=request.user).order_by('-id')[0]
+        transaction=PayTransaction.objects.filter(user=request.user).order_by('-id')[0]
         transaction.status='CANCELLED'
         transaction.save()
 
@@ -134,7 +136,7 @@ def GetBankCards(request,countryCode):
 
 csrf_exempt
 @api_view(['POST'])
-def CreateNewBuyTransaction(request):
+def CreateNewPayTransaction(request):
     if request.method=="POST":
         data=json.loads(request.body)
         consumerName=data['consumerName']
@@ -146,7 +148,7 @@ def CreateNewBuyTransaction(request):
       
         user=request.user
         
-        buy=BuyTransaction.objects.create(user=user,consumerName=consumerName,consumerId=consumerId,companyName=companyName,type=type,Amount=amount,status="PROCESSING")
+        buy=PayTransaction.objects.create(user=user,consumerName=consumerName,consumerId=consumerId,companyName=companyName,type=type,Amount=amount,status="PROCESSING")
         data={'message':"Transaction started"}
         return Response(data,status=status.HTTP_201_CREATED)
     else:
@@ -154,18 +156,41 @@ def CreateNewBuyTransaction(request):
         return Response(data,status=status.HTTP_400_BAD_REQUEST)
 
 @api_view(['GET'])
-def GetBuyTransactionUserHistory(request,limit=None):
+def GetPayTransactionUserHistory(request,limit=None):
     try:
         if (limit is not None):
-            transaction=BuyTransaction.objects.filter(user=request.user).order_by('-id')[:limit]
+            transaction=PayTransaction.objects.filter(user=request.user).order_by('-id')[:limit]
         else:
-            transaction=BuyTransaction.objects.filter(user=request.user).order_by('-id')
+            transaction=PayTransaction.objects.filter(user=request.user).order_by('-id')
 
 
-        serializer=BuyTransactionSerializer(transaction,many=True)
+        serializer=PayTransactionSerializer(transaction,many=True)
         data={'data':serializer.data}
         return Response(data,status=status.HTTP_200_OK)
     except Exception as e: 
         print(e)
         data={'error':"Couldnot get any transaction"}
         return Response(data,status=status.HTTP_401_UNAUTHORIZED)
+
+        
+@api_view(['GET'])
+def Dashboard(request):
+    try:
+        transferTransaction=TransferTransaction.objects.filter(user=request.user,status="PAID")
+        payTransaction=PayTransaction.objects.filter(user=request.user,status="PAID")
+        total_sent_transfer = transferTransaction.aggregate(total_sent=Sum('sentAmount'))['total_sent'] or 0
+        print(total_sent_transfer)
+
+# Calculate the total sent amount for pay transactions
+        total_sent_pay = payTransaction.aggregate(total_sent=Sum('Amount'))['total_sent'] or 0
+
+# Sum up the total sent amount from both types of transactions
+
+        transfer0=transferTransaction[0].sender.currencyCode
+        total_sent_money = total_sent_transfer + total_sent_pay
+        sucessfullTransfer=transferTransaction.count()+payTransaction.count()    
+        data={'totalSentMoney':total_sent_money,'currencyCode':transfer0,'sucessFullTransfer':sucessfullTransfer}
+        return Response(data,status=status.HTTP_200_OK)
+    except Exception as e:
+        return Response({'error':"Transcation couldnot be found"},status=status.HTTP_400_BAD_REQUEST)
+
