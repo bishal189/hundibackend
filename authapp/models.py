@@ -66,7 +66,9 @@ class Account(AbstractBaseUser):
     zip_code=models.CharField(max_length=10,blank=True,null=True)
     address=models.CharField(max_length=50,blank=True,null=True)
     gender=models.CharField(max_length=10,blank=True,null=True)
+    balance = models.DecimalField(max_digits=10, decimal_places=2,default=0)  # Adjust max_digits and decimal_places as needed
 
+    
 
     #required filed mendotory 
 

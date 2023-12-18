@@ -16,7 +16,6 @@ from rest_framework_simplejwt.tokens import RefreshToken
 from transactionapp.serializers import AccountSerializer
 # from transactionapp.serializers import AccountSerializer
 # from .serializers import UserProfileSerializer
-
 #
 @csrf_exempt
 @api_view(['POST'])

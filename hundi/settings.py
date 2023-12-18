@@ -45,6 +45,7 @@ INSTALLED_APPS = [
 
     'authapp',
     'transactionapp',
+    'requestapp',
 
 ]
 
