@@ -6,6 +6,7 @@ from rest_framework.response import Response
 from authapp.models import Account
 from .models import RequestTransaction
 from .serializers import RequestTransactionSerializer
+import datetime
 # Create your views here.
 
 @api_view(['POST'])
@@ -33,7 +34,7 @@ def createNewRequest(request):
 def GetAllRequestTransaction(request):
     try:
         if request.method=="GET":
-            requestTransaction=RequestTransaction.objects.filter(requester=request.user).order_by('-id')
+            requestTransaction=RequestTransaction.objects.filter(requestedTo=request.user).order_by('-id')
             serializer=RequestTransactionSerializer(requestTransaction,many=True)
             dataResponse={'data':serializer.data}
             return Response(dataResponse,status=status.HTTP_200_OK)
@@ -60,6 +61,7 @@ def AcceptRequestTransaction(request,transactId):
             requestedTo.save()
             requester.save()
             transaction.status='Accept'
+            transaction.completedAt=datetime.datetime.now()
             transaction.save()
 
             return Response({"message":"You have Sucessfully Accepted the Request"},status=status.HTTP_200_OK)

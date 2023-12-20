@@ -67,3 +67,5 @@ class PayTransaction(models.Model):
     completed_at=models.DateField(blank=True,null=True)
 
 
+
+

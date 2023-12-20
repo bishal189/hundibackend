@@ -12,6 +12,8 @@ class RequestTransaction(models.Model):
         ('DECLINE','Decline'),
     ]
     status=models.CharField(max_length=10,choices=statusChoices,default='DECLINE')
+    createdAt=models.DateTimeField(auto_now_add=True)
+    completedAt=models.DateTimeField(null=True,blank=True)
     
 
 

@@ -67,7 +67,6 @@ def VerifyTransferTransaction(request):
         return Response(data,status=status.HTTP_400_BAD_REQUEST)
 
 
-
 @csrf_exempt
 @api_view(['GET']) 
 def CancelTransferTransaction(request):
