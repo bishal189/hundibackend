@@ -3,9 +3,11 @@ from rest_framework.response import Response
 from rest_framework import status
 from rest_framework.decorators import api_view
 import json
+from datetime import datetime
+
 from .models import ProductType,ProductItems,BuyTransaction
 from .forms import ProductItemForm
-from .serializers import BuyTransactionSerializer
+from .serializers import BuyTransactionSerializer,ProductItemsSerializer,ProductTypeSerializer
 # Create your views here.
 
 @api_view(['POST'])
@@ -18,10 +20,12 @@ def CreateNewProductItem(request):
             formData.save()
             return Response({'message':"Item has been sucessfully Added"})
         else:
+            print(formData.errors)
             return Response({'error':"Incoming Data not correct"},status=status.HTTP_403_FORBIDDEN)
     except Exception as e: 
         error=str(e)
         return Response({'error':f"Unexpected Error Occured...{error}"},status=status.HTTP_400_BAD_REQUEST)
+
 
 @api_view(['POST'])
 def CreateNewProductType(request):
@@ -30,8 +34,8 @@ def CreateNewProductType(request):
             return Response({'error':"Only Admin can add new product Type"})
     
         data=json.loads(request.body)
-        productType=data['productType']
-        product,created=ProductType.objects.get_or_create(productType=productType)
+        producttype=data['producttype']
+        product,created=ProductType.objects.get_or_create(producttype=producttype)
         if created:
             return Response({'message':"Product Type has been added sucessfully"},status=status.HTTP_201_CREATED)
         else:
@@ -40,6 +44,7 @@ def CreateNewProductType(request):
     except Exception as e:    
         error=str(e)
         return Response({'error':f"UNexpected error Occured {error}"},status=status.HTTP_400_BAD_REQUEST)
+
 
 @api_view(['GET'])
 def AddProductItemToProductType(request,productTypeId,productItemId):
@@ -61,12 +66,53 @@ def AddProductItemToProductType(request,productTypeId,productItemId):
         error=str(e)
         return Response({'error':f"UNexpected error Occured {error}"},status=status.HTTP_400_BAD_REQUEST)
 
+@api_view(['GET'])
+def ListProductItem(request,productTypeId):
+    try:
+        productType=ProductType.objects.get(id=productTypeId)
+        productItems=productType.products.all()
+        serializer=ProductItemsSerializer(productItems,many=True)
+        data={'data':serializer.data}
+        return Response(data,status=status.HTTP_200_OK)
+    
+    except Exception as e: 
+        error=str(e)
+        return Response({'error':f"Unexpected Error Occured{error}"},status=status.HTTP_400_BAD_REQUEST)
+
+
+@api_view(['GET'])
+def ListProductType(request):
+    try:
+        productType=ProductType.objects.all().order_by('-id')
+        print(productType)
+        serializer=ProductTypeSerializer(productType,many=True)
+        data={'data':serializer.data}
+        return Response(data,status=status.HTTP_200_OK)
+    except Exception as e: 
+        error=str(e)
+        return Response({'error':f"Unexpected error occured {error}"},status=status.HTTP_400_BAD_REQUEST)
+
+
+@api_view(['GET'])
+def ShowProductItemDetail(request,productItemId):
+    try:
+        productItem=ProductItems.objects.get(id=productItemId)
+        serializer=ProductItemsSerializer(productItem)
+        data={'data':serializer.data}
+        return Response(data,status=status.HTTP_200_OK)
+    except Exception as e: 
+        error=str(e)
+        return Response({'error':f"Unexpected Error occured..{error}"},status=status.HTTP_400_BAD_REQUEST)
+
+
 @api_view(['POST'])
 def CreateNewBuyTransaction(request):
     try:
         data=json.loads(request.body)
         productItemId=data['productItemId']
         productItem=ProductItems.objects.get(id=productItemId)
+        if productItem.status=='PENDING':
+            return Response({'error':"Cannot add this product which is not accepted"},status=status.HTTP_403_FORBIDDEN)
         BuyTransaction.objects.create(buyer=request.user,item=productItem,quantity=data['quantity'],totalPrice=data['totalPrice'])
         return Response({'message':"New Buy Transaction Created Successfully"},status=status.HTTP_201_CREATED)
 
@@ -113,6 +159,7 @@ def ApproveBuyTransaction(request,transactId):
             return Response({'error':"ONLy admin can approve a buy transaction"},status=status.HTTP_401_UNAUTHORIZED)
         transaction=BuyTransaction.objects.get(id=transactId)
         transaction.status='PAID'
+        transaction.completedAt=datetime.now()
         transaction.save()
         serializer=BuyTransactionSerializer(transaction)
         data={'data':serializer.data}

@@ -11,8 +11,9 @@ class ProductItems(models.Model):
         ('ACCEPT','ACCEPT'),
     ]
     status=models.CharField(max_length=20,choices=statusChoices,default="PENDING")
+    
 class ProductType(models.Model):
-    productType=models.CharField(max_length=100)
+    producttype=models.CharField(max_length=100)
     products=models.ManyToManyField(ProductItems)
     createdAt=models.DateField(auto_now_add=True)
 
