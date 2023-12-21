@@ -1,4 +1,3 @@
-from .models import Account
 from django.views.decorators.csrf import csrf_exempt
 from rest_framework.decorators import api_view
 from .serializers import BankDetailSerializer,TransferTransactionSerializer,PayTransactionSerializer,SenderSerializer,ReceiverSerializer

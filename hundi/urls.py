@@ -26,4 +26,5 @@ urlpatterns = [
     path("transaction/",include('transactionapp.urls')),
     path('request/',include('requestapp.urls')),
     path('buy/',include('buyapp.urls')),
+    path('wallet/',include('walletapp.urls'))
 ]+ static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

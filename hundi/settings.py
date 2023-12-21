@@ -47,6 +47,8 @@ INSTALLED_APPS = [
     'buyapp',
     'transactionapp',
     'requestapp',
+    'walletapp',
+    
 
 ]
 
