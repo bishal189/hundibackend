@@ -29,7 +29,7 @@ class WithdrawTransaction(models.Model):
 
     status=models.CharField(max_length=10,default='PENDING',choices=statusChoices)
     createdAt=models.DateTimeField(auto_now_add=True)
-    completedAt=models.DateTimeField()
+    completedAt=models.DateTimeField(null=True,blank=True)
 
 class SendTransaction(models.Model):
     user=models.ForeignKey(Account,on_delete=models.CASCADE)
@@ -42,5 +42,5 @@ class SendTransaction(models.Model):
     ]
     status=models.CharField(max_length=10,default='PENDING',choices=statusChoices)
     createdAt=models.DateTimeField(auto_now_add=True)
-    completedAt=models.DateTimeField()
+    completedAt=models.DateTimeField(null=True,blank=True)
 
