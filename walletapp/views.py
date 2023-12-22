@@ -12,8 +12,14 @@ def CreateNewTopUpTransaction(request):
         data=json.loads(request.body)
         bankAccountNumber=data['bankAccountNumber']
         amount=data['amount']
-        TopUpTransaction.objects.create(user=request.user,bankAccountNumber=bankAccountNumber,amount=amount)
-        return Response({'message':'Transaction Created Successfully'},status=status.HTTP_201_CREATED)
+        password=data['password']
+        name=data['name']
+        passwordChecker=request.user.check_password(password)
+        if passwordChecker!=True:
+            return Response({'error':"Please Enter Correct Password and Try again"},status=status.HTTP_401_UNAUTHORIZED)
+        
+        TopUpTransaction.objects.create(user=request.user,name=name,bankAccountNumber=bankAccountNumber,amount=amount)
+        return Response({'message':'Transaction Created Successfully.You Will Receive An Email once Your Transaction gets approved'},status=status.HTTP_201_CREATED)
     
     except Exception as e : 
         error=str(e)
@@ -57,10 +63,16 @@ def GetTopUpTransactionHistory(request):
 def CreateNewWithDrawTransaction(request):
     try:
         data=json.loads(request.body)
+        password=data['password']
+        passwordChecker=request.user.check_password(password)
+        if passwordChecker!=True:
+            return Response({'error':"Please Enter Correct Password and Try again"},status=status.HTTP_401_UNAUTHORIZED)
+
         bankAccountNumber=data['bankAccountNumber']
         amount=data['amount']
-        WithdrawTransaction.objects.create(user=request.user,bankAccountNumber=bankAccountNumber,amount=amount)
-        return Response({'message':'Transaction Created Successfully'},status=status.HTTP_201_CREATED)
+        name=data['name']
+        WithdrawTransaction.objects.create(user=request.user,name=name,bankAccountNumber=bankAccountNumber,amount=amount)
+        return Response({'message':'Transaction Created Successfully.You Will Receive An Email once Your Transaction gets approved'},status=status.HTTP_201_CREATED)
     
     except Exception as e : 
         error=str(e)
@@ -107,10 +119,16 @@ def GetWithDrawTransactionHistory(request):
 def CreateNewSendTransaction(request):
     try:
         data=json.loads(request.body)
+        password=data['password']
+        passwordChecker=request.user.check_password(password)
+        if passwordChecker!=True:
+            return Response({'error':"Please Enter Correct Password and Try again"},status=status.HTTP_401_UNAUTHORIZED)
+
         recipentName=data['recipentName']
         amount=data['amount']
-        SendTransaction.objects.create(user=request.user,recipentName=recipentName,amount=amount)
-        return Response({'message':'Transaction Created Successfully'},status=status.HTTP_201_CREATED)
+        recipentAccountNumber=data['recipentAccountNumber']
+        SendTransaction.objects.create(user=request.user,recipentAccountNumber=recipentAccountNumber,recipentName=recipentName,amount=amount)
+        return Response({'message':'Transaction Created Successfully.You Will Receive An Email once Your Transaction gets approved'},status=status.HTTP_201_CREATED)
     
     except Exception as e : 
         error=str(e)

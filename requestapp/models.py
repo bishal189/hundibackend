@@ -8,10 +8,11 @@ class RequestTransaction(models.Model):
     requestedTo = models.ForeignKey(Account, on_delete=models.CASCADE, related_name='request_transactions_received')
     requestedAmount=models.DecimalField(max_digits=10,decimal_places=2)
     statusChoices=[
+        ('PENDING','Pending'),
         ('ACCEPT','Accept'),
         ('DECLINE','Decline'),
     ]
-    status=models.CharField(max_length=10,choices=statusChoices,default='DECLINE')
+    status=models.CharField(max_length=10,choices=statusChoices,default='PENDING')
     createdAt=models.DateTimeField(auto_now_add=True)
     completedAt=models.DateTimeField(null=True,blank=True)
     

@@ -3,8 +3,7 @@ from rest_framework.response import Response
 from rest_framework import status
 from rest_framework.decorators import api_view
 import json
-from datetime import datetime
-
+from django.utils import timezone
 from .models import ProductType,ProductItems,BuyTransaction
 from .forms import ProductItemForm
 from .serializers import BuyTransactionSerializer,ProductItemsSerializer,ProductTypeSerializer
@@ -159,7 +158,7 @@ def ApproveBuyTransaction(request,transactId):
             return Response({'error':"ONLy admin can approve a buy transaction"},status=status.HTTP_401_UNAUTHORIZED)
         transaction=BuyTransaction.objects.get(id=transactId)
         transaction.status='PAID'
-        transaction.completedAt=datetime.now()
+        transaction.completedAt=timezone.now()
         transaction.save()
         serializer=BuyTransactionSerializer(transaction)
         data={'data':serializer.data}

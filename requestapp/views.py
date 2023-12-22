@@ -6,7 +6,7 @@ from rest_framework.response import Response
 from authapp.models import Account
 from .models import RequestTransaction
 from .serializers import RequestTransactionSerializer
-import datetime
+from django.utils import timezone
 # Create your views here.
 
 @api_view(['POST'])
@@ -19,7 +19,7 @@ def createNewRequest(request):
             requestedAmount=data['requestedAmount']
             newRequest=RequestTransaction.objects.create(requester=requester,requestedTo=requestedTo,requestedAmount=requestedAmount)
             serializer=RequestTransactionSerializer(newRequest)
-            responseData={'data':serializer.data}
+            responseData={'message':"Request Sent Sucessfully . You will receive an email once your request is Accepted by your Requested person"}
             return Response(responseData,status=status.HTTP_200_OK)
 
         else:
@@ -34,7 +34,7 @@ def createNewRequest(request):
 def GetAllRequestTransaction(request):
     try:
         if request.method=="GET":
-            requestTransaction=RequestTransaction.objects.filter(requestedTo=request.user).order_by('-id')
+            requestTransaction=RequestTransaction.objects.filter(requestedTo=request.user,status='PENDING').order_by('-id')
             serializer=RequestTransactionSerializer(requestTransaction,many=True)
             dataResponse={'data':serializer.data}
             return Response(dataResponse,status=status.HTTP_200_OK)
@@ -49,26 +49,40 @@ def AcceptRequestTransaction(request,transactId):
     try:
         if request.method=="GET":
             transaction=RequestTransaction.objects.get(id=transactId,requestedTo=request.user)
-            if transaction.status=='Accept':
-                return Response({'error':"You cannot Accept this again..Already Accepted if You didnot received money contact support"})
+            if transaction.status!='PENDING':
+                return Response({'error':"You cannot Accept this ..Already Accepted or denied Contact Support if you didnot receive money but it is accepted "},status=status.HTTP_403_FORBIDDEN)
             requester=transaction.requester
             requestedTo=request.user
             if requestedTo.balance<transaction.requestedAmount:
-                return Response({'error':"You donot have enough funds to accept this request"})
+                return Response({'error':"You donot have enough funds to accept this request"},status=status.HTTP_403_FORBIDDEN)
             
             requester.balance=requester.balance+transaction.requestedAmount
             requestedTo.balance=requestedTo.balance-transaction.requestedAmount
             requestedTo.save()
             requester.save()
-            transaction.status='Accept'
-            transaction.completedAt=datetime.datetime.now()
+            transaction.status='ACCEPT'
+            transaction.completedAt=timezone.now()
             transaction.save()
 
             return Response({"message":"You have Sucessfully Accepted the Request"},status=status.HTTP_200_OK)
+            
+    except Exception as e:
+        error=str(e)
+        return Response({'error':f"Some Unexpected Error Occured ... {error}"},status=status.HTTP_400_BAD_REQUEST)
 
 
-        
+@api_view(['GET'])
+def DenyRequestTransaction(request,transactId):
+    try:
+        if request.method=="GET":
+            transaction=RequestTransaction.objects.get(id=transactId,requestedTo=request.user)
+            if transaction.status!='PENDING':
+                return Response({'error':"You cannot deny this ..Already denied or accepted.Contact Support if you didnot receive money but it is accepted "},status=status.HTTP_400_BAD_REQUEST)
+            transaction.status='DECLINE'
+            transaction.completedAt=timezone.now()
+            transaction.save()
 
+            return Response({"message":"You have Sucessfully Denied the Request"},status=status.HTTP_200_OK)
             
     except Exception as e:
         error=str(e)

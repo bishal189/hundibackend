@@ -5,6 +5,7 @@ from authapp.models import Account
 class TopUpTransaction(models.Model):
     user=models.ForeignKey(Account,on_delete=models.CASCADE)
     bankAccountNumber=models.CharField(max_length=50)
+    name=models.CharField(max_length=50,null=True,blank=True)   
     amount=models.DecimalField(max_digits=10,decimal_places=2)
     statusChoices=[
         ('PENDING','Pending'),
@@ -20,6 +21,7 @@ class TopUpTransaction(models.Model):
 class WithdrawTransaction(models.Model):
     user=models.ForeignKey(Account,on_delete=models.CASCADE)
     bankAccountNumber=models.CharField(max_length=100)
+    name=models.CharField(max_length=50)
     amount=models.DecimalField(max_digits=10,decimal_places=2)
     statusChoices=[
         ('PENDING','Pending'),
@@ -33,7 +35,8 @@ class WithdrawTransaction(models.Model):
 
 class SendTransaction(models.Model):
     user=models.ForeignKey(Account,on_delete=models.CASCADE)
-    recipentName=models.CharField(max_length=100)
+    name=models.CharField(max_length=100)
+    bankAccountNumber=models.CharField(max_length=100,blank=True,null=True)
     amount=models.DecimalField(max_digits=10,decimal_places=2)
     statusChoices=[
         ('PENDING','Pending'),
