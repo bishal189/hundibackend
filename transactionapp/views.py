@@ -192,3 +192,21 @@ def Dashboard(request):
     except Exception as e:
         return Response({'error':"Transcation couldnot be found"},status=status.HTTP_400_BAD_REQUEST)
 
+
+#For admin routes start
+@api_view(['GET'])
+def GetTransferTransactionAdminHistory(request):
+    try:
+        if request.user.is_admin:
+            print('hello')
+        transaction=TransferTransaction.objects.all().order_by('-id')
+
+        serializer=TransferTransactionSerializer(transaction,many=True)
+        data={'data':serializer.data}
+        return Response(data,status=status.HTTP_200_OK)
+    except Exception as e:
+        print(e)
+        data={'error':"Couldnot get any transaction"}
+        return Response(data,status=status.HTTP_401_UNAUTHORIZED)
+
+

@@ -15,4 +15,8 @@ urlpatterns = [
     path('getPayTransactionHistory/',views.GetPayTransactionUserHistory,name='buy_history'),
     path('cancelPayTransaction/',views.CancelPayTransaction,name='cancelPayTransaction'),
     path('newPayTransaction/',views.CreateNewPayTransaction,name='buy_newTransaction'),
+
+
+    #for admin now
+    path('getTransferTransactionAdminHistory/',views.GetTransferTransactionAdminHistory),
 ]

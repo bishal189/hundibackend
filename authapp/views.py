@@ -74,6 +74,7 @@ def Login(request):
             if '@' in email_or_phone:
             # Authenticate the user and perform other login logic
                 user = auth.authenticate(email=email_or_phone, password=password)
+                print(user)
             else:
                 user_phone=Account.objects.get(phone_number=email_or_phone)
                 user=auth.authenticate(email=user_phone.email,password=password)
