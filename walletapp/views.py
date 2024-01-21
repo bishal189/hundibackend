@@ -49,7 +49,10 @@ def AcceptTopUpTransaction(request,transactionId):
 @api_view(['GET'])
 def GetTopUpTransactionHistory(request):
     try:
-        transactions=TopUpTransaction.objects.filter(user=request.user).order_by('-id')
+        if request.user.is_admin:
+            transactions=TopUpTransaction.objects.all().order_by('-id')
+        else:
+            transactions=TopUpTransaction.objects.filter(user=request.user).order_by('-id')
         serializer=TopUpTransactionSerializer(transactions,many=True)
         data={'data':serializer.data}
         return Response(data,status=status.HTTP_200_OK)
@@ -105,7 +108,10 @@ def AcceptWithDrawTransaction(request,transactionId):
 @api_view(['GET'])
 def GetWithDrawTransactionHistory(request):
     try:
-        transactions=WithdrawTransaction.objects.filter(user=request.user).order_by('-id')
+        if request.user.is_admin:
+             transactions=WithdrawTransaction.objects.all().order_by('-id')
+        else:
+            transactions=WithdrawTransaction.objects.filter(user=request.user).order_by('-id')
         serializer=WithDrawTransactionSerializer(transactions,many=True)
         data={'data':serializer.data}
         return Response(data,status=status.HTTP_200_OK)
@@ -163,7 +169,11 @@ def AcceptSendTransaction(request,transactionId):
 @api_view(['GET'])
 def GetSendTransactionHistory(request):
     try:
-        transactions=SendTransaction.objects.filter(user=request.user).order_by('-id')
+        if request.user.is_admin:
+
+            transactions=SendTransaction.objects.all().order_by('-id')
+        else:
+            transactions=SendTransaction.objects.filter(user=request.user).order_by('-id')
         serializer=SendTransactionSerializer(transactions,many=True)
         data={'data':serializer.data}
         return Response(data,status=status.HTTP_200_OK)

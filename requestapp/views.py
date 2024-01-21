@@ -34,7 +34,12 @@ def createNewRequest(request):
 def GetAllRequestTransaction(request):
     try:
         if request.method=="GET":
-            requestTransaction=RequestTransaction.objects.filter(requestedTo=request.user,status='PENDING').order_by('-id')
+
+            if request.user.is_admin:
+
+                requestTransaction=RequestTransaction.objects.all().order_by('-id')
+            else:
+                requestTransaction=RequestTransaction.objects.filter(requestedTo=request.user,status='PENDING').order_by('-id')
             serializer=RequestTransactionSerializer(requestTransaction,many=True)
             dataResponse={'data':serializer.data}
             return Response(dataResponse,status=status.HTTP_200_OK)
