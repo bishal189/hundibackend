@@ -198,12 +198,30 @@ def Dashboard(request):
 def GetTransferTransactionAdminHistory(request):
     try:
         if request.user.is_admin:
-            print('hello')
-        transaction=TransferTransaction.objects.all().order_by('-id')
+            transaction=TransferTransaction.objects.all().order_by('-id')
 
-        serializer=TransferTransactionSerializer(transaction,many=True)
-        data={'data':serializer.data}
-        return Response(data,status=status.HTTP_200_OK)
+            serializer=TransferTransactionSerializer(transaction,many=True)
+            data={'data':serializer.data}
+            return Response(data,status=status.HTTP_200_OK)
+        else:
+            return Response({'error':"User is not admin"},status=400)
+    except Exception as e:
+        print(e)
+        data={'error':"Couldnot get any transaction"}
+        return Response(data,status=status.HTTP_401_UNAUTHORIZED)
+
+
+@api_view(['GET'])
+def GetPayTransactionAdminHistory(request):
+    try:
+
+        if request.user.is_admin:
+            transaction=PayTransaction.objects.all().order_by('-id')
+            serializer=PayTransactionSerializer(transaction,many=True)
+            data={'data':serializer.data}
+            return Response(data,status=status.HTTP_200_OK)
+        else:
+            return Response({'error:':"user is not admin"},status=400)
     except Exception as e:
         print(e)
         data={'error':"Couldnot get any transaction"}

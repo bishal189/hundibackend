@@ -19,4 +19,5 @@ urlpatterns = [
 
     #for admin now
     path('getTransferTransactionAdminHistory/',views.GetTransferTransactionAdminHistory),
+    path('getPayTransactionAdminHistory/',views.GetPayTransactionAdminHistory),
 ]

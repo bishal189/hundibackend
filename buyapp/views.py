@@ -112,6 +112,7 @@ def CreateNewBuyTransaction(request):
         productItem=ProductItems.objects.get(id=productItemId)
         if productItem.status=='PENDING':
             return Response({'error':"Cannot add this product which is not accepted"},status=status.HTTP_403_FORBIDDEN)
+
         BuyTransaction.objects.create(buyer=request.user,item=productItem,quantity=data['quantity'],totalPrice=data['totalPrice'])
         return Response({'message':"New Buy Transaction Created Successfully"},status=status.HTTP_201_CREATED)
 
@@ -123,6 +124,7 @@ def CreateNewBuyTransaction(request):
 @api_view(['GET'])
 def GetBuyTransactionHistory(request,limit=None):
     try:
+
         transaction=BuyTransaction.objects.filter(buyer=request.user).order_by('-id')
         if limit is not None:
             transaction=transaction[:limit]
@@ -167,3 +169,21 @@ def ApproveBuyTransaction(request,transactId):
         error=str(e)
         data={"error":f"Some unexpected Error {error}"}
 
+
+
+
+@api_view(['GET'])
+def GetBuyTransactionAdminHistory(request):
+    try:
+        if request.user.is_admin:
+            transaction=BuyTransaction.objects.all().order_by('-id')
+
+            serializer=BuyTransactionSerializer(transaction,many=True)
+            data={'data':serializer.data}
+            return Response(data,status=status.HTTP_200_OK)
+        else:
+            return Response({'error':"Error user must be admin"})
+
+    except Exception as e:
+        error=str(e)
+        return Response({'error':f"UNexpected error Occured {error}"},status=status.HTTP_400_BAD_REQUEST)

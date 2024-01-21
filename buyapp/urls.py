@@ -13,4 +13,10 @@ urlpatterns = [
     path('getBuyTransactionHistory/<int:limit>/',views.GetBuyTransactionHistory),
     path('cancelBuyTransaction/',views.CancelBuyTransaction),
     path('approveBuyTransaction/<int:transactId>/',views.ApproveBuyTransaction),
+
+
+
+    #admin
+    path('getBuyTransactionAdminHistory/',views.GetBuyTransactionAdminHistory),
+
 ]
