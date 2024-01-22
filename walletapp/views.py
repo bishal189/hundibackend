@@ -46,6 +46,24 @@ def AcceptTopUpTransaction(request,transactionId):
         error=str(e)
         return Response({'error':f"Unexpected error occured {error}"},status=status.HTTP_400_BAD_REQUEST)
 
+
+@api_view(['GET'])
+def DenyTopUpTransaction(request,transactionId):
+    try:
+        if request.user.is_admin!=True:
+            return Response({'error':"only Admin can accept a topup"},status=status.HTTP_401_UNAUTHORIZED)
+        transaction=TopUpTransaction.objects.get(id=transactionId)
+        if transaction.status=='ACCEPT':
+            return Response({'error':"Transaction is already accepted cannot accept again"},status=status.HTTP_403_FORBIDDEN)
+        transaction.status='CANCEL'
+        transaction.completedAt=timezone.now()
+        transaction.save()
+        return Response({'message':"Transaction Successfully approved"},status=status.HTTP_200_OK)
+
+    except Exception as e:
+        error=str(e)
+        return Response({'error':f"Unexpected error occured {error}"},status=status.HTTP_400_BAD_REQUEST)
+
 @api_view(['GET'])
 def GetTopUpTransactionHistory(request):
     try:
@@ -104,6 +122,26 @@ def AcceptWithDrawTransaction(request,transactionId):
     except Exception as e:
         error=str(e)
         return Response({'error':f"Unexpected error occured {error}"},status=status.HTTP_400_BAD_REQUEST)
+
+
+@api_view(['GET'])
+def DenyWithDrawTransaction(request,transactionId):
+    try:
+        if request.user.is_admin!=True:
+            return Response({'error':"only Admin can accept a withdraw"},status=status.HTTP_401_UNAUTHORIZED)
+        transaction=WithdrawTransaction.objects.get(id=transactionId)
+        if transaction.status=='ACCEPT':
+            return Response({'error':"Transaction is already accepted cannot accept again"},status=status.HTTP_403_FORBIDDEN)
+
+        transaction.status='CANCEL'
+        transaction.completedAt=timezone.now()
+        transaction.save()
+        return Response({'message':"Transaction Successfully approved"},status=status.HTTP_200_OK)
+
+    except Exception as e:
+        error=str(e)
+        return Response({'error':f"Unexpected error occured {error}"},status=status.HTTP_400_BAD_REQUEST)
+
 
 @api_view(['GET'])
 def GetWithDrawTransactionHistory(request):
@@ -165,6 +203,26 @@ def AcceptSendTransaction(request,transactionId):
     except Exception as e:
         error=str(e)
         return Response({'error':f"Unexpected error occured {error}"},status=status.HTTP_400_BAD_REQUEST)
+
+@api_view(['GET'])
+def DenySendTransaction(request,transactionId):
+    try:
+        if request.user.is_admin!=True:
+            return Response({'error':"only Admin can accept a sebd trabsactub"},status=status.HTTP_401_UNAUTHORIZED)
+        transaction=SendTransaction.objects.get(id=transactionId)
+        if transaction.status=='ACCEPT':
+            return Response({'error':"Transaction is already accepted cannot accept again"},status=status.HTTP_403_FORBIDDEN)
+
+
+        transaction.status='CANCEL'
+        transaction.completedAt=timezone.now()
+        transaction.save()
+        return Response({'message':"Transaction Successfully approved"},status=status.HTTP_200_OK)
+
+    except Exception as e:
+        error=str(e)
+        return Response({'error':f"Unexpected error occured {error}"},status=status.HTTP_400_BAD_REQUEST)
+
 
 @api_view(['GET'])
 def GetSendTransactionHistory(request):
