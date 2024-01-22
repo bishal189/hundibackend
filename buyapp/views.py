@@ -169,6 +169,24 @@ def ApproveBuyTransaction(request,transactId):
         error=str(e)
         data={"error":f"Some unexpected Error {error}"}
 
+@api_view(['GET'])
+def DenyBuyTransaction(request,transactId):
+    try:
+        if request.user is None:
+            return Response({'error':"ONLy admin can approve a buy transaction"},status=status.HTTP_401_UNAUTHORIZED)
+
+        if request.user.is_admin!=True:
+            return Response({'error':"ONLy admin can approve a buy transaction"},status=status.HTTP_401_UNAUTHORIZED)
+        transaction=BuyTransaction.objects.get(id=transactId)
+        transaction.status='CANCELLED'
+        transaction.completedAt=timezone.now()
+        transaction.save()
+        serializer=BuyTransactionSerializer(transaction)
+        data={'data':serializer.data}
+        return Response(data,status=status.HTTP_200_OK)
+    except Exception as e:
+        error=str(e)
+        data={"error":f"Some unexpected Error {error}"}
 
 
 
@@ -176,7 +194,7 @@ def ApproveBuyTransaction(request,transactId):
 def GetBuyTransactionAdminHistory(request):
     try:
         if request.user.is_admin:
-            transaction=BuyTransaction.objects.all().order_by('-id')
+            transaction=BuyTransaction.objects.filter(status='PROCESSING').order_by('-id')
 
             serializer=BuyTransactionSerializer(transaction,many=True)
             data={'data':serializer.data}

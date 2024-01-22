@@ -53,7 +53,12 @@ def GetAllRequestTransaction(request):
 def AcceptRequestTransaction(request,transactId):
     try:
         if request.method=="GET":
-            transaction=RequestTransaction.objects.get(id=transactId,requestedTo=request.user)
+            if request.user.is_admin:
+
+                transaction=RequestTransaction.objects.get(id=transactId)
+            else:
+                transaction=RequestTransaction.objects.get(id=transactId,requestedTo=request.user)
+
             if transaction.status!='PENDING':
                 return Response({'error':"You cannot Accept this ..Already Accepted or denied Contact Support if you didnot receive money but it is accepted "},status=status.HTTP_403_FORBIDDEN)
             requester=transaction.requester
@@ -80,7 +85,10 @@ def AcceptRequestTransaction(request,transactId):
 def DenyRequestTransaction(request,transactId):
     try:
         if request.method=="GET":
-            transaction=RequestTransaction.objects.get(id=transactId,requestedTo=request.user)
+            if request.user.is_admin:
+                transaction=RequestTransaction.objects.get(id=transactId)
+            else:
+                transaction=RequestTransaction.objects.get(id=transactId,requestedTo=request.user)
             if transaction.status!='PENDING':
                 return Response({'error':"You cannot deny this ..Already denied or accepted.Contact Support if you didnot receive money but it is accepted "},status=status.HTTP_400_BAD_REQUEST)
             transaction.status='DECLINE'
@@ -92,3 +100,4 @@ def DenyRequestTransaction(request,transactId):
     except Exception as e:
         error=str(e)
         return Response({'error':f"Some Unexpected Error Occured ... {error}"},status=status.HTTP_400_BAD_REQUEST)
+
