@@ -228,3 +228,75 @@ def GetPayTransactionAdminHistory(request):
         return Response(data,status=status.HTTP_401_UNAUTHORIZED)
 
 
+@api_view(['GET'])
+def ApproveTransferTransactionAdmin(request,transactId):
+    try:
+        if request.user.is_admin:
+
+            transaction=TransferTransaction.objects.get(id=transactId)
+            transaction.status='PAID'
+            transaction.save()
+
+            data={"message":"Transfer Transaction Approved"}
+            return Response(data,status=status.HTTP_200_OK)
+        else:
+            return Response({'error':"Only admin can approve this"},status=403)
+    except Exception as e:
+        print(e)
+        data={"error":" Transction couldnot be accepted"}
+        return Response(data,status=status.HTTP_400_BAD_REQUEST)
+
+@api_view(['GET'])
+def DenyTransferTransactionAdmin(request,transactId):
+    try:
+        if request.user.is_admin:
+            transaction=TransferTransaction.objects.get(id=transactId)
+            transaction.status='CANCELLED'
+            transaction.save()
+
+            data={"message":"Transfer Transaction Cancelled"}
+        else:
+            data={"error":"Only admin can cancel this"}
+        return Response(data,status=status.HTTP_200_OK)
+    except Exception as e:
+        print(e)
+        data={"error":" Transction couldnot be cancelled"}
+        return Response(data,status=status.HTTP_400_BAD_REQUEST)
+
+
+
+@api_view(['GET'])
+def ApprovePayTransactionAdmin(request,transactId):
+    try:
+        if request.user.is_admin:
+
+            transaction=PayTransaction.objects.get(id=transactId)
+            transaction.status='PAID'
+            transaction.save()
+
+            data={"message":"Pay Transaction Approved"}
+            return Response(data,status=status.HTTP_200_OK)
+        else:
+            return Response({'error':"Only admin can approve this"},status=403)
+    except Exception as e:
+        print(e)
+        data={"error":" Pay couldnot be accepted"}
+        return Response(data,status=status.HTTP_400_BAD_REQUEST)
+
+@api_view(['GET'])
+def DenyPayTransactionAdmin(request,transactId):
+    try:
+        if request.user.is_admin:
+            transaction=PayTransaction.objects.get(id=transactId)
+            transaction.status='CANCELLED'
+            transaction.save()
+
+            data={"message":"Pay Transaction Cancelled"}
+        else:
+            data={"error":"Only admin can cancel this"}
+        return Response(data,status=status.HTTP_200_OK)
+    except Exception as e:
+        print(e)
+        data={"error":" Transaction couldnot be cancelled"}
+        return Response(data,status=status.HTTP_400_BAD_REQUEST)
+

@@ -20,4 +20,8 @@ urlpatterns = [
     #for admin now
     path('getTransferTransactionAdminHistory/',views.GetTransferTransactionAdminHistory),
     path('getPayTransactionAdminHistory/',views.GetPayTransactionAdminHistory),
+    path('approveTransferTransactionAdmin/<transactId>/',views.ApproveTransferTransactionAdmin),
+    path('denyTransferTransactionAdmin/<transactId>/',views.DenyTransferTransactionAdmin),
+    path('approvePayTransactionAdmin/<transactId>/',views.ApprovePayTransactionAdmin),
+    path('denyPayTransactionAdmin/<transactId>/',views.DenyPayTransactionAdmin),
 ]
