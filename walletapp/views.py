@@ -184,7 +184,7 @@ def CreateNewSendTransaction(request):
 def AcceptSendTransaction(request,transactionId):
     try:
         if request.user.is_admin!=True:
-            return Response({'error':"only Admin can accept a sebd trabsactub"},status=status.HTTP_401_UNAUTHORIZED)
+            return Response({'error':"only Admin can accept a send transaction"},status=status.HTTP_401_UNAUTHORIZED)
         transaction=SendTransaction.objects.get(id=transactionId)
         if transaction.status=='ACCEPT':
             return Response({'error':"Transaction is already accepted cannot accept again"},status=status.HTTP_403_FORBIDDEN)
@@ -208,7 +208,7 @@ def AcceptSendTransaction(request,transactionId):
 def DenySendTransaction(request,transactionId):
     try:
         if request.user.is_admin!=True:
-            return Response({'error':"only Admin can accept a sebd trabsactub"},status=status.HTTP_401_UNAUTHORIZED)
+            return Response({'error':"only Admin can accept a send trabsaction"},status=status.HTTP_401_UNAUTHORIZED)
         transaction=SendTransaction.objects.get(id=transactionId)
         if transaction.status=='ACCEPT':
             return Response({'error':"Transaction is already accepted cannot accept again"},status=status.HTTP_403_FORBIDDEN)

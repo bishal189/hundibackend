@@ -4,6 +4,7 @@ from .serializers import BankDetailSerializer,TransferTransactionSerializer,PayT
 from  .models import TransferTransaction,BankDetail,Sender,Receiver,PayTransaction
 from rest_framework.response import Response
 from rest_framework import status
+from django.utils import timezone
 import json
 from django.db.models import Sum
 
@@ -235,6 +236,8 @@ def ApproveTransferTransactionAdmin(request,transactId):
 
             transaction=TransferTransaction.objects.get(id=transactId)
             transaction.status='PAID'
+            transaction.completed_at=timezone.now()
+
             transaction.save()
 
             data={"message":"Transfer Transaction Approved"}
@@ -252,7 +255,10 @@ def DenyTransferTransactionAdmin(request,transactId):
         if request.user.is_admin:
             transaction=TransferTransaction.objects.get(id=transactId)
             transaction.status='CANCELLED'
+            transaction.completed_at=timezone.now()
             transaction.save()
+
+
 
             data={"message":"Transfer Transaction Cancelled"}
         else:

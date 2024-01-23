@@ -46,7 +46,7 @@ class TransferTransaction(models.Model):
     ]
     status=models.CharField(choices=status_choices,max_length=15,blank=True)
     created_at=models.DateTimeField(auto_now_add=True)
-    completed_at=models.DateField(blank=True,null=True)
+    completed_at=models.DateTimeField(blank=True,null=True)
 
 #For creating a relation between sender and receiver
 class PayTransaction(models.Model):
@@ -64,7 +64,7 @@ class PayTransaction(models.Model):
     ]
     status=models.CharField(choices=status_choices,max_length=15,blank=True)
     created_at=models.DateTimeField(auto_now_add=True,blank=True,null=True)
-    completed_at=models.DateField(blank=True,null=True)
+    completed_at=models.DateTimeField(blank=True,null=True)
 
 
 
