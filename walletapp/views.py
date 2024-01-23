@@ -58,7 +58,7 @@ def DenyTopUpTransaction(request,transactionId):
         transaction.status='CANCEL'
         transaction.completedAt=timezone.now()
         transaction.save()
-        return Response({'message':"Transaction Successfully approved"},status=status.HTTP_200_OK)
+        return Response({'message':"Transaction Successfully denied"},status=status.HTTP_200_OK)
 
     except Exception as e:
         error=str(e)
@@ -136,7 +136,7 @@ def DenyWithDrawTransaction(request,transactionId):
         transaction.status='CANCEL'
         transaction.completedAt=timezone.now()
         transaction.save()
-        return Response({'message':"Transaction Successfully approved"},status=status.HTTP_200_OK)
+        return Response({'message':"Transaction Successfully denied"},status=status.HTTP_200_OK)
 
     except Exception as e:
         error=str(e)
@@ -217,7 +217,7 @@ def DenySendTransaction(request,transactionId):
         transaction.status='CANCEL'
         transaction.completedAt=timezone.now()
         transaction.save()
-        return Response({'message':"Transaction Successfully approved"},status=status.HTTP_200_OK)
+        return Response({'message':"Transaction Successfully denied"},status=status.HTTP_200_OK)
 
     except Exception as e:
         error=str(e)
