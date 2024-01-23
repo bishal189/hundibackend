@@ -278,6 +278,8 @@ def ApprovePayTransactionAdmin(request,transactId):
 
             transaction=PayTransaction.objects.get(id=transactId)
             transaction.status='PAID'
+
+            transaction.completed_at=timezone.now()
             transaction.save()
 
             data={"message":"Pay Transaction Approved"}
@@ -295,6 +297,8 @@ def DenyPayTransactionAdmin(request,transactId):
         if request.user.is_admin:
             transaction=PayTransaction.objects.get(id=transactId)
             transaction.status='CANCELLED'
+
+            transaction.completed_at=timezone.now()
             transaction.save()
 
             data={"message":"Pay Transaction Cancelled"}
