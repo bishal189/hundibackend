@@ -10,7 +10,7 @@ class RequestTransaction(models.Model):
     statusChoices=[
         ('PENDING','Pending'),
         ('ACCEPT','Accept'),
-        ('DECLINE','Decline'),
+        ('CANCELLED','Cancelled'),
     ]
     status=models.CharField(max_length=10,choices=statusChoices,default='PENDING')
     createdAt=models.DateTimeField(auto_now_add=True)

@@ -91,7 +91,7 @@ def DenyRequestTransaction(request,transactId):
                 transaction=RequestTransaction.objects.get(id=transactId,requestedTo=request.user)
             if transaction.status!='PENDING':
                 return Response({'error':"You cannot deny this ..Already denied or accepted.Contact Support if you didnot receive money but it is accepted "},status=status.HTTP_400_BAD_REQUEST)
-            transaction.status='DECLINE'
+            transaction.status='CANCELLED'
             transaction.completedAt=timezone.now()
             transaction.save()
 

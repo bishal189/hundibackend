@@ -3,7 +3,7 @@ from . import views
 urlpatterns = [
     path('createNewRequest/',views.createNewRequest),
     path('getRequestTransactionHistory/',views.GetAllRequestTransaction),
-    path('acceptRequestTransaction/<int:transactId>',views.AcceptRequestTransaction),
-    path('denyRequestTransaction/<int:transactId>',views.DenyRequestTransaction),
+    path('acceptRequestTransaction/<transactId>/',views.AcceptRequestTransaction),
+    path('denyRequestTransaction/<transactId>/',views.DenyRequestTransaction),
     
 ]
