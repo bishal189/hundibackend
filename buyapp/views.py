@@ -163,7 +163,7 @@ def ApproveBuyTransaction(request,transactId):
         transaction.completedAt=timezone.now()
         transaction.save()
         serializer=BuyTransactionSerializer(transaction)
-        data={'data':serializer.data}
+        data={'message':'Successfully Approved','data':serializer.data}
         return Response(data,status=status.HTTP_200_OK)
     except Exception as e: 
         error=str(e)
@@ -182,7 +182,7 @@ def DenyBuyTransaction(request,transactId):
         transaction.completedAt=timezone.now()
         transaction.save()
         serializer=BuyTransactionSerializer(transaction)
-        data={'data':serializer.data}
+        data={'message':"successfully denied",'data':serializer.data}
         return Response(data,status=status.HTTP_200_OK)
     except Exception as e:
         error=str(e)
@@ -194,7 +194,7 @@ def DenyBuyTransaction(request,transactId):
 def GetBuyTransactionAdminHistory(request):
     try:
         if request.user.is_admin:
-            transaction=BuyTransaction.objects.filter(status='PROCESSING').order_by('-id')
+            transaction=BuyTransaction.objects.all().order_by('-id')
 
             serializer=BuyTransactionSerializer(transaction,many=True)
             data={'data':serializer.data}
