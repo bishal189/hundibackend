@@ -115,10 +115,34 @@ def get_csrf_token(request):
     csrf_token = get_token(request)
     return Response({'csrf_token': csrf_token})
 
+
 @api_view(['GET'])
-def get_user(request):
-    serializer=AccountSerializer(request.user)
+def get_user(request,userId=None):
+    if userId is None:
+        serializer=AccountSerializer(request.user)
+    else:
+        if request.user.is_admin==True:
+            user=Account.objects.get(id=userId)
+            serializer=AccountSerializer(user)
+        else:
+            return Response({"error":"Only admin can view other user detail"},status=400)
+
     return Response({'data':serializer.data})
+
+@api_view(['GET'])
+def get_all_users(request):
+    try:
+        if request.user.is_admin:
+            users=Account.objects.all().order_by('-id')
+            serializer=AccountSerializer(users,many=True)
+            return Response({'data':serializer.data},status=200)
+        else:
+            return Response({'error':"Only admin can view all users"},status=403)
+
+    except Exception as e:
+        error=str(e)
+        print(error)
+        return Response({'error':f"Unexpcted error occured {error}"},status=400)
 
 
 

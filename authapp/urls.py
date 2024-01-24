@@ -7,5 +7,7 @@ urlpatterns = [
     path('updateProfile/',views.update_profile,name='updateprofile'),
     path('get_token/',views.get_csrf_token,name='get_token'),
     path('verify_user/',views.verifyUser),
-    path('getuser/',views.get_user)
+    path('getuser/',views.get_user),
+    path('getuser/<userId>',views.get_user),
+    path('getallusers/',views.get_all_users),
 ]
